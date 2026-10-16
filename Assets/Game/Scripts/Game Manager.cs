@@ -18,6 +18,11 @@ namespace Game
         public GameObject Player => player;
         [SerializeField] private GameObject player;
 
+        // How long 
+        [SerializeField] private float detectionTimeout = 10f;
+
+        private float detectionTimer;
+
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -62,15 +67,30 @@ namespace Game
             FindAnyObjectByType<WinDoor>().OnEnter += HandleWin;
         }
 
-        public void ReportPlayerDetected()
+        // Runs detection timer if the player has been detected
+        private void Update()
         {
-            if (playerDetected)
+            if (!playerDetected)
             {
                 return;
             }
 
+            detectionTimer += Time.deltaTime;
+
+            if (detectionTimer >= detectionTimeout)
+            {
+                playerDetected = false;
+                detectionTimer = 0f;
+
+                Debug.Log("Enemies have lost the player's position.");
+            }
+        }
+
+        public void ReportPlayerDetected()
+        {
             playerDetected = true;
             Debug.Log("Everyone knows the player's position!");
+            detectionTimer = 0f;
         }
 
         public void HandleWin()

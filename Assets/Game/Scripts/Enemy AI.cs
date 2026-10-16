@@ -56,20 +56,20 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Detect the player visually or through running noise.
-        if (CanSeePlayer() || CanHearPlayer())
+        bool detectedNow = CanSeePlayer() || CanHearPlayer();
+
+        if (detectedNow)
         {
             isChasing = true;
-
-            if (!GameManager.Instance.PlayerDetected)
-            {
-                GameManager.Instance.ReportPlayerDetected();
-            }
-
-            OnDetection?.Invoke();
+            GameManager.Instance.ReportPlayerDetected();
         }
         else if (GameManager.Instance.PlayerDetected)
         {
             isChasing = true;
+        }
+        else
+        {
+            isChasing = false;
         }
 
         if (isChasing)
